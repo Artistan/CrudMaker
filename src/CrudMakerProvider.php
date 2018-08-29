@@ -2,6 +2,8 @@
 
 namespace Grafite\CrudMaker;
 
+use Grafite\CrudMaker\Console\CrudMaker;
+use Grafite\CrudMaker\Console\TableCrudMaker;
 use Grafite\FormMaker\FormMakerProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -44,8 +46,8 @@ class CrudMakerProvider extends ServiceProvider
         */
 
         $this->commands([
-            \Grafite\CrudMaker\Console\CrudMaker::class,
-            \Grafite\CrudMaker\Console\TableCrudMaker::class,
+            CrudMaker::class,
+            TableCrudMaker::class,
         ]);
     }
 }

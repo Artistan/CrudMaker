@@ -6,6 +6,13 @@ use Illuminate\Filesystem\Filesystem;
 
 class FileService
 {
+    /**
+     * make directory
+     *
+     * @param $path
+     * @param $mode
+     * @param $recursive
+     */
     public function mkdir($path, $mode, $recursive)
     {
         if (! is_dir($path)) {
@@ -13,6 +20,13 @@ class FileService
         }
     }
 
+    /**
+     * get file contents
+     *
+     * @param $file
+     * @return string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function get($file)
     {
         $filesystem = new Filesystem();

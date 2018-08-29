@@ -2,6 +2,7 @@
 
 use org\bovigo\vfs\vfsStream;
 use Grafite\CrudMaker\Services\CrudService;
+use Illuminate\Console\Command;
 
 class MockProgressBar
 {
@@ -13,8 +14,18 @@ class MockProgressBar
 
 class CrudServiceTest extends TestCase
 {
+    /**
+     * @var CrudService
+     */
     protected $service;
+    /**
+     * @var array
+     */
     protected $config;
+
+    /**
+     * @var Command
+     */
     protected $command;
     protected $bar;
 
@@ -22,9 +33,9 @@ class CrudServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->command = Mockery::mock(\Illuminate\Console\Command::class);
+        $this->command = Mockery::mock(Command::class);
         $this->command->shouldReceive('callSilent')->andReturnUsing(function ($command, $data) {
-            \Artisan::call($command, $data);
+            $this->artisan($command, $data);
         });
         $this->bar = Mockery::mock('MockProgressBar')
             ->shouldReceive('advance')
@@ -72,12 +83,17 @@ class CrudServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGenerateCore()
     {
         $crud = vfsStream::setup("/");
 
         $this->service->generateCore($this->config, $this->bar);
+        /** @var \org\bovigo\vfs\vfsStreamFile $modelContents */
         $modelContents = $crud->getChild('Models/TestTable.php');
+        /** @var \org\bovigo\vfs\vfsStreamFile $serviceContents */
         $serviceContents = $crud->getChild('Services/TestTableService.php');
 
         $this->assertTrue($crud->hasChild('Services/TestTableService.php'));
@@ -85,13 +101,18 @@ class CrudServiceTest extends TestCase
         $this->assertContains('class TestTableService', $serviceContents->getContent());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGenerateAppBased()
     {
         $crud = vfsStream::setup("/");
         $crud->addChild(vfsStream::newDirectory('Http'));
 
         $this->service->generateAppBased($this->config, $this->bar);
+        /** @var \org\bovigo\vfs\vfsStreamFile $controllerContents */
         $controllerContents = $crud->getChild('Http/Controllers/TestTablesController.php');
+        /** @var \org\bovigo\vfs\vfsStreamFile $routesContents */
         $routesContents = $crud->getChild('Http/routes.php');
 
         $this->assertTrue($crud->hasChild('Http/Controllers/TestTablesController.php'));
@@ -99,13 +120,18 @@ class CrudServiceTest extends TestCase
         $this->assertContains('TestTablesController', $routesContents->getContent());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGenerateAPI()
     {
         $crud = vfsStream::setup("/");
         $crud->addChild(vfsStream::newDirectory('Http'));
 
         $this->service->generateAPI($this->config, $this->bar);
+        /** @var \org\bovigo\vfs\vfsStreamFile $controllerContents */
         $controllerContents = $crud->getChild('Http/Controllers/Api/TestTablesController.php');
+        /** @var \org\bovigo\vfs\vfsStreamFile $routesContents */
         $routesContents = $crud->getChild('Http/api-routes.php');
 
         $this->assertTrue($crud->hasChild('Http/Controllers/Api/TestTablesController.php'));

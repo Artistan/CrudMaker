@@ -2,7 +2,6 @@
 
 namespace Grafite\CrudMaker\Console;
 
-use Config;
 use Exception;
 use Illuminate\Console\Command;
 use Grafite\CrudMaker\Generators\CrudGenerator;
@@ -137,7 +136,7 @@ class CrudMaker extends Command
     /**
      * Generate a CRUD stack.
      *
-     * @return mixed
+     * @throws \Exception
      */
     public function handle()
     {
@@ -204,7 +203,9 @@ class CrudMaker extends Command
             $section = $splitTable[0];
             $config = $this->configService->configASectionedCRUD($config, $section, $table, $splitTable);
         } else {
-            $config = array_merge($config, app('config')->get('crudmaker.single', []));
+            /** @var \Illuminate\Config\Repository $configObject */
+            $configObject = app('config');
+            $config = array_merge($config, $configObject->get('crudmaker.single', []));
             $config = $this->configService->setConfig($config, $section, $table);
         }
 
@@ -214,7 +215,6 @@ class CrudMaker extends Command
                 '_path_package_' => $moduleDirectory,
                 '_path_facade_' => $moduleDirectory.'/Facades',
                 '_path_service_' => $moduleDirectory.'/Services',
-                '_path_model_' => $moduleDirectory.'/Models',
                 '_path_model_' => $moduleDirectory.'/Models',
                 '_path_controller_' => $moduleDirectory.'/Controllers',
                 '_path_views_' => $moduleDirectory.'/Views',
@@ -250,6 +250,7 @@ class CrudMaker extends Command
      * Generate a service provider for the new module.
      *
      * @param  array $config
+     * @throws \Exception
      */
     public function createPackageServiceProvider($config)
     {
@@ -263,6 +264,7 @@ class CrudMaker extends Command
      * @param string $section
      * @param string $table
      * @param array  $splitTable
+     * @throws \Exception
      */
     public function createCRUD($config, $section, $table, $splitTable)
     {

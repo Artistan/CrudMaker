@@ -4,6 +4,9 @@ use Grafite\CrudMaker\Services\AppService;
 
 class AppServiceTest extends TestCase
 {
+    /**
+     * @var AppService
+     */
     protected $service;
 
     public function setUp()

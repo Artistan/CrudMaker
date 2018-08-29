@@ -10,6 +10,9 @@ use Grafite\CrudMaker\Traits\SchemaTrait;
  */
 class ValidatorService
 {
+    /**
+     * valid column name regular expression
+     */
     const VALID_COLUMN_NAME_REGEX = '[A-z\/_.]+';
 
     use SchemaTrait;
@@ -19,7 +22,8 @@ class ValidatorService
      *
      * @param \Grafite\CrudMaker\Console\CrudMaker $command
      *
-     * @return bool|Exception
+     * @return bool
+     * @throws \Exception
      */
     public function validateSchema($command)
     {
@@ -50,7 +54,8 @@ class ValidatorService
      *
      * @param \Grafite\CrudMaker\Console\CrudMaker $command
      *
-     * @return bool|Exception
+     * @return bool
+     * @throws \Exception
      */
     public function validateOptions($command)
     {

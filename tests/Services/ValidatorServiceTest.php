@@ -5,8 +5,18 @@ use Grafite\CrudMaker\Services\ValidatorService;
 
 class ValidatorServiceTest extends TestCase
 {
+    /**
+     * @var \Mockery\MockInterface|\Grafite\CrudMaker\Console\CrudMaker
+     */
     protected $command;
+
+    /**
+     * @var ValidatorService
+     */
     protected $validator;
+    /**
+     * @var array
+     */
     protected $config;
 
     public function setUp()
@@ -48,6 +58,9 @@ class ValidatorServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testInvalidSchemaValidateOptions()
     {
         $this->command->shouldReceive('option')
@@ -65,6 +78,9 @@ class ValidatorServiceTest extends TestCase
         $this->validator->validateSchema($this->command);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testValidateOptions()
     {
         $this->command->shouldReceive('option')
@@ -82,6 +98,9 @@ class ValidatorServiceTest extends TestCase
         $this->assertTrue($test);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testInvalidUIValidateOptions()
     {
         $this->command->shouldReceive('option')
@@ -92,6 +111,9 @@ class ValidatorServiceTest extends TestCase
         $this->validator->validateSchema($this->command);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testValidateSchema()
     {
         $this->command->shouldReceive('option')
@@ -112,6 +134,9 @@ class ValidatorServiceTest extends TestCase
         $this->assertTrue($test);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testInvalidSchemaValidateSchema()
     {
         $this->command->shouldReceive('option')
@@ -131,6 +156,9 @@ class ValidatorServiceTest extends TestCase
         $this->validator->validateOptions($this->command);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testInvalidMigrationValidateSchema()
     {
         $this->command->shouldReceive('option')

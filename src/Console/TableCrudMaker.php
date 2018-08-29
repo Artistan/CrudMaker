@@ -35,7 +35,7 @@ class TableCrudMaker extends Command
     /**
      * Generate a CRUD stack.
      *
-     * @return mixed
+     * @throws Exception
      */
     public function handle()
     {

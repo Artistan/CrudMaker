@@ -1,20 +1,35 @@
 <?php
 
 use Grafite\CrudMaker\Generators\DatabaseGenerator;
+use Grafite\CrudMaker\Console\CrudMaker;
 
 class DatabaseGeneratorTest extends TestCase
 {
+    /**
+     * @var DatabaseGenerator
+     */
     protected $generator;
-    protected $config;
-    protected $artisanMock;
 
+    /**
+     * @var CrudMaker
+     */
+    protected $command;
+
+    /**
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * setup tests
+     */
     public function setUp()
     {
         parent::setUp();
         $this->generator = new DatabaseGenerator();
-        $this->command = Mockery::mock(\Illuminate\Console\Command::class);
+        $this->command = Mockery::mock(CrudMaker::class);
         $this->command->shouldReceive('callSilent')->andReturnUsing(function ($command, $data) {
-            \Artisan::call($command, $data);
+            $this->artisan($command, $data);
         });
         $this->config = [
             '_path_migrations_' => base_path('database/migrations'),
@@ -22,6 +37,9 @@ class DatabaseGeneratorTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateMigrationFail()
     {
         $this->expectException('Exception');
@@ -29,21 +47,26 @@ class DatabaseGeneratorTest extends TestCase
         $this->generator->createMigration($this->config, 'random_string', 'TestTable', 'another_random_string', $this->command);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateMigrationSuccess()
     {
         $this->createMigration();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateMigrationSuccessAlternativeLocation()
     {
-        $config = [
-            '_path_migrations_' => base_path('alternative_migrations_location'),
-        ];
-
         $this->createMigration('alternative_migrations_location');
         $this->assertCount(1, glob(base_path('alternative_migrations_location').'/*'));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateSchema()
     {
         $migrations = $this->createMigration();
@@ -52,8 +75,7 @@ class DatabaseGeneratorTest extends TestCase
             '',
             'TestTable',
             [],
-            'id:increments,name:string',
-            $this->command
+            'id:increments,name:string'
         );
 
         $this->assertContains('test_tables', file_get_contents($migrations[0]));
@@ -64,23 +86,30 @@ class DatabaseGeneratorTest extends TestCase
         $this->assertContains('table->string(\'name\')', $schemaForm);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateSchemaAlternativeLocation()
     {
-        $migrations = $this->createMigration('alternative_migrations_location');
+        $this->createMigration('alternative_migrations_location');
 
         $schemaForm = $this->generator->createSchema(
             $this->config,
             '',
             'TestTable',
             [],
-            'id:increments,name:string',
-            $this->command
+            'id:increments,name:string'
         );
 
         $this->assertContains('table->increments', $schemaForm);
         $this->assertContains('table->string(\'name\')', $schemaForm);
     }
 
+    /**
+     * @param string $location
+     * @return array|false
+     * @throws \Exception
+     */
     private function createMigration($location = null)
     {
         if ($location) {

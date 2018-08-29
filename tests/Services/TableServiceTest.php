@@ -5,7 +5,14 @@ use Grafite\CrudMaker\Services\TableService;
 
 class TableServiceTest extends TestCase
 {
+    /**
+     * @var TableService
+     */
     protected $service;
+
+    /**
+     * @var array
+     */
     protected $config;
 
     public function setUp()

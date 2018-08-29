@@ -2,6 +2,9 @@
 
 namespace Grafite\CrudMaker\Services;
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+
 class ConfigService
 {
     /**
@@ -101,8 +104,10 @@ class ConfigService
      */
     public function configASectionedCRUD($config, $section, $table, $splitTable)
     {
-        $appPath = app()->path();
-        $basePath = app()->basePath();
+        /** @var \Illuminate\Foundation\Application $application */
+        $application = app();
+        $appPath = $application->path();
+        $basePath = $application->basePath();
         $appNamespace = $this->appService->getAppNamespace();
 
         $sectionalConfig = [
@@ -139,8 +144,10 @@ class ConfigService
             '_table_name_'               => str_plural(strtolower(implode('_', $splitTable))),
         ];
 
+        /** @var \Illuminate\Config\Repository $configObject */
+        $configObject = app('config');
         $config = array_merge($config, $sectionalConfig);
-        $config = array_merge($config, app('config')->get('crudmaker.sectioned', []));
+        $config = array_merge($config, $configObject->get('crudmaker.sectioned', []));
         $config = $this->setConfig($config, $section, $table);
 
         $pathsToMake = [
@@ -171,7 +178,9 @@ class ConfigService
     {
         $templates = __DIR__.'/../Templates/'.$framework;
 
-        $templates = app('config')->get('crudmaker.template_source', $templates);
+        /** @var \Illuminate\Config\Repository $configObject */
+        $configObject = app('config');
+        $templates = $configObject->get('crudmaker.template_source', $templates);
 
         return $templates;
     }

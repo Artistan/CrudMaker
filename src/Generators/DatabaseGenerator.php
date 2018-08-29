@@ -33,6 +33,7 @@ class DatabaseGenerator
      * @param \Grafite\CrudMaker\Console\CrudMaker $command
      *
      * @return bool
+     * @throws Exception
      */
     public function createMigration($config, $section, $table, $splitTable, $command)
     {
@@ -65,8 +66,10 @@ class DatabaseGenerator
      * @param string $section
      * @param string $table
      * @param array  $splitTable
+     * @param string  $schema
      *
      * @return string
+     * @throws Exception
      */
     public function createSchema($config, $section, $table, $splitTable, $schema)
     {
@@ -153,15 +156,14 @@ class DatabaseGenerator
                     $columnDetailString .= '->';
                 }
             }
-
-            return $columnDetailString;
         }
+        return $columnDetailString;
     }
 
     /**
      * Determine column detail string.
      *
-     * @param array $detail
+     * @param string $detail
      *
      * @return string
      */

@@ -3,6 +3,8 @@
 
 class ArtisanTest extends TestCase
 {
+    public $destinationDir='';
+
     public function setUp()
     {
         parent::setUp();

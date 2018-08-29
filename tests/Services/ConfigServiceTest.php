@@ -5,14 +5,31 @@ use Grafite\CrudMaker\Services\ConfigService;
 
 class ConfigServiceTest extends TestCase
 {
+    /**
+     * @var ConfigService
+     */
     protected $service;
+
+    /**
+     * @var array
+     */
     protected $config;
-    protected $app;
+
+    /**
+     * @var array
+     */
+    protected $sectionedConfig;
+
+    /**
+     * @var \Illuminate\Config\Repository
+     */
+    protected $configObject;
 
     public function setUp()
     {
         parent::setUp();
         $this->service = app(ConfigService::class);
+        $this->configObject = app('config');
         $this->config = [
             'framework'                 => 'Laravel',
             'bootstrap'                  => false,
@@ -99,7 +116,7 @@ class ConfigServiceTest extends TestCase
 
     public function testSetConfig()
     {
-        $config = $this->service->setConfig($this->sectionedConfig, 'admin', 'books');
+        $config = $this->service->setConfig($this->config, 'admin', 'books');
         $this->assertEquals($config['_namespace_model_'], 'App\Models\Admin\Books');
     }
 
@@ -112,8 +129,8 @@ class ConfigServiceTest extends TestCase
 
     public function testGetTemplateConfig()
     {
-        $this->app['config']->set('crudmaker.template_source', __DIR__.'/../../src/Templates/Laravel');
-        $config = $this->service->getTemplateConfig('Laravel', 'home');
+        $this->configObject->set('crudmaker.template_source', __DIR__.'/../../src/Templates/Laravel');
+        $config = $this->service->getTemplateConfig('Laravel');
         $this->assertContains('Templates/Laravel', $config);
     }
 }

@@ -171,6 +171,7 @@ class TableService
      * Get Table Columns.
      *
      * @param string $table Table name
+     * @param bool $allColumns
      *
      * @return array
      */

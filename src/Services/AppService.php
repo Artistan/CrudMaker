@@ -6,6 +6,9 @@ use RuntimeException;
 
 class AppService
 {
+    /**
+     * @return int|string
+     */
     public function getAppNamespace()
     {
         $composer = json_decode(file_get_contents(base_path('composer.json')), true);

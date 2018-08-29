@@ -10,6 +10,12 @@ class CrudService
     protected $crudGenerator;
     protected $dbGenerator;
 
+    /**
+     * CrudService constructor.
+     *
+     * @param \Grafite\CrudMaker\Generators\CrudGenerator $crudGenerator
+     * @param \Grafite\CrudMaker\Generators\DatabaseGenerator $dbGenerator
+     */
     public function __construct(
         CrudGenerator $crudGenerator,
         DatabaseGenerator $dbGenerator
@@ -23,6 +29,7 @@ class CrudService
      *
      * @param array                                         $config
      * @param \Symfony\Component\Console\Helper\ProgressBar $bar
+     * @throws \Exception
      */
     public function generateCore($config, $bar)
     {
@@ -41,6 +48,7 @@ class CrudService
      *
      * @param array                                         $config
      * @param \Symfony\Component\Console\Helper\ProgressBar $bar
+     * @throws \Exception
      */
     public function generateAppBased($config, $bar)
     {
@@ -59,11 +67,13 @@ class CrudService
     /**
      * Generate db elements.
      *
+     * @param array                                         $config
      * @param \Symfony\Component\Console\Helper\ProgressBar $bar
      * @param string                                        $section
      * @param string                                        $table
      * @param array                                         $splitTable
-     * @param \Grafite\CrudMaker\Console\CrudMaker              $command
+     * @param \Grafite\CrudMaker\Console\CrudMaker          $command
+     * @throws \Exception
      */
     public function generateDB($config, $bar, $section, $table, $splitTable, $command)
     {
@@ -93,6 +103,7 @@ class CrudService
      *
      * @param array                                         $config
      * @param \Symfony\Component\Console\Helper\ProgressBar $bar
+     * @throws \Exception
      */
     public function generateAPI($config, $bar)
     {
@@ -106,6 +117,7 @@ class CrudService
      * Generates a service provider.
      *
      * @param  array $config
+     * @throws \Exception
      */
     public function generatePackageServiceProvider($config)
     {

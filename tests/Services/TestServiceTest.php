@@ -5,7 +5,14 @@ use Grafite\CrudMaker\Services\TestService;
 
 class TestServiceTest extends TestCase
 {
+    /**
+     * @var TestService
+     */
     protected $service;
+
+    /**
+     * @var Filesystem
+     */
     protected $filesystem;
 
     public function setUp()

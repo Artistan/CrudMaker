@@ -37,7 +37,7 @@ class Publish extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function handle()
     {
@@ -71,6 +71,8 @@ class Publish extends Command
 
     /**
      *  Publish config files for Lumen.
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     private function publishConfig()
     {
@@ -84,6 +86,8 @@ class Publish extends Command
 
     /**
      *  Publish templates files for Lumen.
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     private function publishTemplates()
     {

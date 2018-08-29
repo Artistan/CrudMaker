@@ -66,6 +66,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createController($config)
     {
@@ -88,6 +89,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createModel($config)
     {
@@ -117,6 +119,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createRequest($config)
     {
@@ -133,7 +136,8 @@ class CrudGenerator
         $createRequest = $this->putIfNotExists($config['_path_request_'].'/'.$config['_camel_case_'].'CreateRequest.php', $createRequest);
         $updateRequest = $this->putIfNotExists($config['_path_request_'].'/'.$config['_camel_case_'].'UpdateRequest.php', $updateRequest);
 
-        return $createRequest;
+        // return false if either create or update file creation fails.
+        return $createRequest === false || $updateRequest === false ? false : true;
     }
 
     /**
@@ -142,16 +146,18 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createService($config)
     {
         $this->fileService->mkdir($config['_path_service_'], 0777, true);
 
-        $service = $this->fileService->get($config['template_source'].'/Service.txt');
-
         if ($config['options-withBaseService'] ?? false) {
             $baseService = $this->fileService->get($config['template_source'].'/BaseService.txt');
             $service = $this->fileService->get($config['template_source'].'/ExtendedService.txt');
+        } else {
+            $baseService = '';
+            $service = $this->fileService->get($config['template_source'].'/Service.txt');
         }
 
         foreach ($config as $key => $value) {
@@ -176,6 +182,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createRoutes($config)
     {
@@ -206,6 +213,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createFactory($config)
     {
@@ -232,6 +240,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createFacade($config)
     {
@@ -254,6 +263,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function generatePackageServiceProvider($config)
     {
@@ -277,13 +287,15 @@ class CrudGenerator
      * @param string|array $withApi
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function createTests($config, $serviceOnly = '', $apiOnly = false, $withApi = false)
+    public function createTests($config, $serviceOnly = '', $apiOnly = '', $withApi = '')
     {
         $testTemplates = $this->filesystem->allFiles($config['template_source'].'/Tests');
 
         $filteredTestTemplates = $this->testService->filterTestTemplates($testTemplates, $serviceOnly, $apiOnly, $withApi);
 
+        /** @var \Symfony\Component\Finder\SplFileInfo $testTemplate */
         foreach ($filteredTestTemplates as $testTemplate) {
             $test = $this->fileService->get($testTemplate->getRealPath());
             $testName = $config['_camel_case_'].$testTemplate->getBasename('.'.$testTemplate->getExtension());
@@ -311,6 +323,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createViews($config)
     {
@@ -346,6 +359,7 @@ class CrudGenerator
      * @param array $config
      *
      * @return bool
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function createApi($config)
     {
@@ -382,7 +396,8 @@ class CrudGenerator
      * @param  string $file
      * @param  mixed $contents
      *
-     * @return void
+     * @return int|false
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function putIfNotExists($file, $contents)
     {

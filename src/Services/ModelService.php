@@ -2,12 +2,13 @@
 
 namespace Grafite\CrudMaker\Services;
 
-use Grafite\CrudMaker\Services\TableService;
-
 class ModelService
 {
     protected $tableService;
 
+    /**
+     * ModelService constructor.
+     */
     public function __construct()
     {
         $this->tableService = new TableService();

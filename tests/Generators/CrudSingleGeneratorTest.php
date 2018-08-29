@@ -5,9 +5,24 @@ use Grafite\CrudMaker\Generators\CrudGenerator;
 
 class CrudSingleGeneratorTest extends TestCase
 {
+    /**
+     * @var CrudGenerator
+     */
     protected $generator;
+
+    /**
+     * @var vfsStream
+     */
+    protected $crud;
+
+    /**
+     * @var array
+     */
     protected $config;
 
+    /**
+     * setup Test
+     */
     public function setUp()
     {
         $this->generator = new CrudGenerator();
@@ -49,67 +64,92 @@ class CrudSingleGeneratorTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testApiGenerator()
     {
         $this->crud = vfsStream::setup('Http/Controllers/Api');
 
-        $this->generator->createApi($this->config, false);
+        $this->generator->createApi($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Http/Controllers/Api/TestTablesController.php');
 
         $this->assertTrue($this->crud->hasChild('Http/Controllers/Api/TestTablesController.php'));
         $this->assertContains('class TestTablesController extends Controller', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testControllerGenerator()
     {
         $this->crud = vfsStream::setup('Http/Controllers');
         $this->generator->createController($this->config);
 
         $this->assertTrue($this->crud->hasChild('Http/Controllers/TestTablesController.php'));
+
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Http/Controllers/TestTablesController.php');
 
         $this->assertContains('class TestTablesController extends Controller', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testModelsGenerator()
     {
         $this->crud = vfsStream::setup('Models');
 
         $this->generator->createModel($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Models/TestTable.php');
 
         $this->assertTrue($this->crud->hasChild('Models/TestTable.php'));
         $this->assertContains('class TestTable', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testRequestGenerator()
     {
         $this->crud = vfsStream::setup('Http/Requests');
 
         $this->generator->createRequest($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Http/Requests/TestTableCreateRequest.php');
 
         $this->assertTrue($this->crud->hasChild('Http/Requests/TestTableCreateRequest.php'));
         $this->assertContains('class TestTableCreateRequest', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testServiceGenerator()
     {
         $this->crud = vfsStream::setup('Services');
 
         $this->generator->createService($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Services/TestTableService.php');
 
         $this->assertTrue($this->crud->hasChild('Services/TestTableService.php'));
         $this->assertContains('class TestTableService', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testRoutesGenerator()
     {
         $this->crud = vfsStream::setup('Http');
         file_put_contents(vfsStream::url('Http/routes.php'), 'test');
 
-        $this->generator->createRoutes($this->config, false);
+        $this->generator->createRoutes($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('Http/routes.php');
 
         $this->assertContains('TestTablesController', $contents->getContent());
@@ -117,17 +157,24 @@ class CrudSingleGeneratorTest extends TestCase
         $this->assertContains('\'uses\' => \'TestTablesController@search\'', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testViewsGenerator()
     {
         $this->crud = vfsStream::setup('resources/views');
 
         $this->generator->createViews($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('resources/views/testtables/index.blade.php');
 
         $this->assertTrue($this->crud->hasChild('resources/views/testtables/index.blade.php'));
         $this->assertContains('$testtable', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testTestGenerator()
     {
         $this->crud = vfsStream::setup('tests');
@@ -135,6 +182,7 @@ class CrudSingleGeneratorTest extends TestCase
         $this->assertTrue($this->generator->createTests($this->config, false));
 
         $contents = $this->crud->getChild('tests/feature/TestTableAcceptanceTest.php');
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $this->assertTrue($this->crud->hasChild('tests/feature/TestTableAcceptanceTest.php'));
         $this->assertContains('class TestTableAcceptanceTest', $contents->getContent());
 
@@ -143,6 +191,9 @@ class CrudSingleGeneratorTest extends TestCase
         $this->assertContains('class TestTableServiceTest', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testTestGeneratorServiceOnly()
     {
         $this->crud = vfsStream::setup('tests');
@@ -151,17 +202,22 @@ class CrudSingleGeneratorTest extends TestCase
 
         $this->assertFalse($this->crud->hasChild('tests/feature/TestTableAcceptanceTest.php'));
 
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('tests/unit/TestTableServiceTest.php');
         $this->assertTrue($this->crud->hasChild('tests/unit/TestTableServiceTest.php'));
         $this->assertContains('class TestTableServiceTest', $contents->getContent());
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testFactoryGenerator()
     {
         $this->crud = vfsStream::setup('database/factories');
         file_put_contents(vfsStream::url('database/factories/ModelFactory.php'), 'test');
 
         $this->generator->createFactory($this->config);
+        /** @var \org\bovigo\vfs\vfsStreamFile $contents */
         $contents = $this->crud->getChild('database/factories/ModelFactory.php');
 
         $this->assertContains('TestTable::class', $contents->getContent());
