@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 ----
 
+## [v1.4.5] - 2018-09-03
+
+### Fixed
+- Issue with test directory case
+
+## [v1.4.4] - 2018-08-31
+
+### Fixed
+- Enumeration columns - @Artistan
+
 ## [v1.4.3] - 2018-07-03
 
 ### Fixed
